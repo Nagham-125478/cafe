@@ -264,8 +264,7 @@ function sendToWhatsApp() {
         }
     }
 
-    let message = "☕ *طلب جديد من كافيه الأسرة* ☕\n\n";
-    message += "*تفاصيل الطلب:*\n";
+     let message += "*تفاصيل الطلب:*\n";
 
     let total = 0;
     cart.forEach((item, index) => {
