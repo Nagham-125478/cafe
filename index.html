@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كافيه   - المنيو الإلكتروني</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- الهيدر وشريط البحث -->
+    <header class="main-header">
+        <h1 class="restaurant-name">كافيه </h1>
+        <p class="slogan">أجود أنواع القهوة والحلويات الطازجة</p>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث عن مشروبك أو تحليتك المفضلة...">
+        </div>
+    </header>
+
+    <!-- شريط التبويبات للأقسام -->
+    <nav class="categories-nav">
+        <button class="nav-btn active" onclick="filterCategory('all', event)">الكل</button>
+        <button class="nav-btn" onclick="filterCategory('hot_drinks', event)">مشروبات ساخنة</button>
+        <button class="nav-btn" onclick="filterCategory('cold_drinks', event)">مشروبات باردة</button>
+        <button class="nav-btn" onclick="filterCategory('desserts', event)">الحلويات</button>
+        <button class="nav-btn" onclick="filterCategory('bakery', event)">المخبوزات والوافل</button>
+        <button class="nav-btn" onclick="filterCategory('snack', event)">وجبات خفيفة</button>
+    </nav>
+
+    <!-- شبكة عرض الكروت -->
+    <main class="menu-container" id="menuContainer"></main>
+
+    <!-- زر السلة العائم -->
+    <button class="cart-floating-btn" onclick="toggleCart()">
+        🛒 السلة (<span id="cartCount">0</span>)
+    </button>
+
+    <!-- نافذة السلة المنبثقة -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>سلة الطلبات</h2>
+                <button class="close-btn" onclick="toggleCart()">&times;</button>
+            </div>
+            
+            <div class="cart-items" id="cartItemsContainer">
+                <p class="empty-msg">السلة فارغة حالياً</p>
+            </div>
+
+            <div class="cart-footer">
+                <div class="total-price">
+                    <span>المجموع:</span>
+                    <span id="totalAmount">0.00 د.أ</span>
+                </div>
+                
+                <div id="checkoutSection" style="margin-top: 15px;">
+                    <label for="paymentMethod" style="display:block; margin-bottom: 5px; font-weight:bold; font-size:0.9rem;">طريقة الدفع:</label>
+                    <select id="paymentMethod" onchange="handlePaymentChange()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:10px; outline:none; font-size:0.9rem;">
+                        <option value="cash">💵 نقداً (عند الطاولة / الاستلام)</option>
+                        <option value="cliq">📱 كليك (CliQ)</option>
+                    </select>
+
+                    <!-- صندوق معلومات تحويل كليك بالاسم المستعار والرقم المشوش -->
+                    <div id="cliqNotice" style="display: none; background-color: #fcf8f2; border: 1px dashed #8c5a3c; padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #5a3825; margin-bottom: 12px; text-align: right; line-height: 1.6;">
+                        📌 <b>تفاصيل التحويل عبر كليك (CliQ):</b><br>
+                        • الاسم المستعار (Alias): <b id="cliqAliasText">MYCAFE</b><br>
+                        • الرقم للتحويل: <span class="blurred-number">078*****91</span> 
+                        <button type="button" onclick="copyCliqNumber()" style="background:#8c5a3c; color:white; border:none; border-radius:4px; padding:3px 8px; cursor:pointer; font-size:0.75rem; margin-right:5px; font-family:inherit;">📋 نسخ الرقم</button><br>
+                        <small style="color: #666;">* اضغط نسخ الرقم للتحويل من تطبيق البنك، ثم أرفق الوصل بعد إرسال الطلب.</small>
+                    </div>
+
+                    <button class="whatsapp-btn" onclick="sendToWhatsApp()">
+                        📲 إرسال الطلب عبر الواتس أب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
