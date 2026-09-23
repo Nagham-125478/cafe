@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كافيه   - المنيو الإلكتروني</title>
+    <title>كافيه - المنيو الإلكتروني</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- الهيدر وشريط البحث -->
     <header class="main-header">
-        <h1 class="restaurant-name">كافيه </h1>
+        <h1 class="restaurant-name">كافيه</h1>
         <p class="slogan">أجود أنواع القهوة والحلويات الطازجة</p>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="ابحث عن مشروبك أو تحليتك المفضلة...">
@@ -53,14 +53,14 @@
                     <span id="totalAmount">0.00 د.أ</span>
                 </div>
                 
-                <div id="checkoutSection" style="margin-top: 15px;">
+                <div id="checkoutSection" style="margin-top: 15px; display: none;">
                     <label for="paymentMethod" style="display:block; margin-bottom: 5px; font-weight:bold; font-size:0.9rem;">طريقة الدفع:</label>
                     <select id="paymentMethod" onchange="handlePaymentChange()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:10px; outline:none; font-size:0.9rem;">
                         <option value="cash">💵 نقداً (عند الطاولة / الاستلام)</option>
                         <option value="cliq">📱 كليك (CliQ)</option>
                     </select>
 
-                    <!-- صندوق معلومات تحويل كليك بالاسم المستعار والرقم المشوش -->
+                    <!-- صندوق معلومات تحويل كليك -->
                     <div id="cliqNotice" style="display: none; background-color: #fcf8f2; border: 1px dashed #8c5a3c; padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #5a3825; margin-bottom: 12px; text-align: right; line-height: 1.6;">
                         📌 <b>تفاصيل التحويل عبر كليك (CliQ):</b><br>
                         • الاسم المستعار (Alias): <b id="cliqAliasText">MYCAFE</b><br>

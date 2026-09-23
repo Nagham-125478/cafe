@@ -19,7 +19,7 @@ const menuItems = [
     { id: 1, name: "إسبريسو دبل", category: "hot_drinks", price: 1.50, image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500&q=80" },
     { id: 2, name: "كابتشينو", category: "hot_drinks", price: 2.50, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500&q=80" },
     { id: 3, name: "لاتيه", category: "hot_drinks", price: 2.50, image: "https://images.unsplash.com/photo-1534778101976-62847782c213?w=500&q=80" },
-     { id: 5, name: "سبانيش لاتيه ساخن", category: "hot_drinks", price: 3.00, image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&q=80" },
+    { id: 5, name: "سبانيش لاتيه ساخن", category: "hot_drinks", price: 3.00, image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&q=80" },
     { id: 6, name: "قهوة تركية", category: "hot_drinks", price: 1.25, image: "https://www.turkeyalaan.net/wp-content/uploads/2018/07/180302105914158Turkish-Coffee-Yawmiyati.jpg" },
     { id: 7, name: "شاي أحمر / مع نعنع", category: "hot_drinks", price: 1.00, image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&q=80" },
     { id: 8, name: "هوت شوكليت", category: "hot_drinks", price: 2.50, image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=500&q=80" },
@@ -44,7 +44,7 @@ const menuItems = [
     { id: 22, name: "كريب لوتس", category: "bakery", price: 3.50, image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?w=500&q=80" },
     { id: 23, name: "بان كيك مع عسل وزبدة", category: "bakery", price: 3.00, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&q=80" },
     { id: 24, name: "كرواسون زبدة / جبنة", category: "bakery", price: 1.50, image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80" },
- 
+
     // وجبات خفيفة
     { id: 26, name: "ساندويش كلوب دجاج", category: "snack", price: 3.50, image: "https://www.atyabtabkha.com/tachyon/sites/2/2025/09/%D9%83%D9%84%D9%88%D8%A8-%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D9%8A%D8%B4-%D8%A8%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC-1024x496.jpg" },
     { id: 27, name: "ساندويش حلوم مشوي", category: "snack", price: 3.00, image: "https://kitchen.sayidaty.net/uploads/small/54/5464f725b25ee16f71dd2c8b9b98b693_w750_h500.jpg" },
@@ -128,6 +128,7 @@ function updateCartUI() {
     const cartContainer = document.getElementById("cartItemsContainer");
     const cartCount = document.getElementById("cartCount");
     const totalAmount = document.getElementById("totalAmount");
+    const checkoutSection = document.getElementById("checkoutSection");
 
     if (!cartContainer) return;
 
@@ -137,6 +138,7 @@ function updateCartUI() {
 
     if (cart.length === 0) {
         cartContainer.innerHTML = `<p class="empty-msg">السلة فارغة حالياً</p>`;
+        if (checkoutSection) checkoutSection.style.display = "none";
     } else {
         cart.forEach(item => {
             const itemTotal = item.price * item.quantity;
@@ -158,12 +160,12 @@ function updateCartUI() {
             `;
             cartContainer.appendChild(cartRow);
         });
+
+        if (checkoutSection) checkoutSection.style.display = "block";
     }
 
     if (cartCount) cartCount.textContent = count;
     if (totalAmount) totalAmount.textContent = `${total.toFixed(2)} د.أ`;
-
-    renderCheckoutSection();
 }
 
 function toggleCart() {
@@ -172,49 +174,8 @@ function toggleCart() {
 }
 
 // ==========================================
-// 5. خيارات الدفع والنسخ المخفي
+// 5. خيارات الدفع والنسخ
 // ==========================================
-function renderCheckoutSection() {
-    let checkoutBox = document.getElementById("checkoutSection");
-    
-    if (cart.length === 0) {
-        if (checkoutBox) checkoutBox.remove();
-        return;
-    }
-
-    if (!checkoutBox) {
-        const cartFooter = document.querySelector(".cart-footer");
-        if (!cartFooter) return;
-
-        checkoutBox = document.createElement("div");
-        checkoutBox.id = "checkoutSection";
-
-        checkoutBox.innerHTML = `
-            <div>
-                <label style="font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 5px;">طريقة الدفع:</label>
-                <select id="paymentMethod" onchange="handlePaymentChange()">
-                    <option value="cash">💵 نقداً (عند الطاولة / الاستلام)</option>
-                    <option value="cliq">📱 كليك (CliQ)</option>
-                </select>
-            </div>
-
-            <div id="cliqNotice" style="display: none; background-color: #fcf8f2; border: 1px dashed #8c5a3c; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #5a3825; margin-top: 10px; text-align: right; line-height: 1.5;">
-                📌 <b>تفاصيل التحويل عبر كليك (CliQ):</b><br>
-                • الاسم المستعار (Alias): <b id="cliqAliasText">${CLIQ_ALIAS}</b><br>
-                • الرقم للتحويل: <span class="blurred-number">078*****91</span> 
-                <button type="button" onclick="copyCliqNumber()" style="background:#8c5a3c; color:white; border:none; border-radius:4px; padding:3px 8px; cursor:pointer; font-size:0.75rem; margin-right:5px; font-family:inherit;">📋 نسخ الرقم</button><br>
-                <small style="color: #666;">* اضغط نسخ الرقم للتحويل من تطبيق البنك، ثم أرفق الوصل بعد إرسال الطلب.</small>
-            </div>
-
-            <button class="whatsapp-btn" onclick="sendToWhatsApp()">
-                📲 إرسال الطلب عبر الواتس أب
-            </button>
-        `;
-
-        cartFooter.appendChild(checkoutBox);
-    }
-}
-
 function handlePaymentChange() {
     const paymentSelect = document.getElementById("paymentMethod");
     const cliqNotice = document.getElementById("cliqNotice");
@@ -228,20 +189,27 @@ function handlePaymentChange() {
     }
 }
 
-// دالة نسخ الرقم الصريح للحافظة (Clipboard)
+// دالة نسخ الرقم للحافظة (Clipboard)
 function copyCliqNumber() {
-    navigator.clipboard.writeText(CLIQ_PHONE_NUMBER).then(() => {
-        alert("تم نسخ الرقم بنجاح إلى الحافظة!");
-    }).catch(() => {
-        // دعم متصفحات الهواتف قديمة التحديث
-        const tempInput = document.createElement("input");
-        tempInput.value = CLIQ_PHONE_NUMBER;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-        alert("تم نسخ الرقم بنجاح إلى الحافظة!");
-    });
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(CLIQ_PHONE_NUMBER).then(() => {
+            alert("تم نسخ الرقم بنجاح إلى الحافظة!");
+        }).catch(() => {
+            fallbackCopy();
+        });
+    } else {
+        fallbackCopy();
+    }
+}
+
+function fallbackCopy() {
+    const tempInput = document.createElement("input");
+    tempInput.value = CLIQ_PHONE_NUMBER;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    alert("تم نسخ الرقم بنجاح إلى الحافظة!");
 }
 
 // ==========================================
@@ -264,7 +232,9 @@ function sendToWhatsApp() {
         }
     }
 
-     let message += "*تفاصيل الطلب:*\n";
+    // تصحيح الخطأ: تعريف المتغير بشكل صحيح أولاً
+    let message = "☕ *طلب جديد من المنيو الإلكتروني*\n\n";
+    message += "*تفاصيل الطلب:*\n";
 
     let total = 0;
     cart.forEach((item, index) => {
@@ -297,6 +267,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const filtered = menuItems.filter(item => item.name.toLowerCase().includes(searchTerm));
             displayMenuItems(filtered);
         });
+    }
+
+    const cliqAliasText = document.getElementById("cliqAliasText");
+    if (cliqAliasText) {
+        cliqAliasText.textContent = CLIQ_ALIAS;
     }
 
     displayMenuItems(menuItems);
