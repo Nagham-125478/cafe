@@ -18,17 +18,33 @@ let cart = [];
 // ==========================================
 async function fetchMenuItems() {
     const container = document.getElementById("menuContainer");
-    if (container) {
-        container.innerHTML = "<p style='text-align:center; grid-column: 1/-1; padding: 20px; font-weight: bold;'>جاري تحميل المنيو...</p>";
+
+    // 1. استخدام البيانات المخزنة كاش فوراً (بتفتح بنفس التكة)
+    const cachedData = localStorage.getItem("menuData");
+    if (cachedData) {
+        try {
+            menuItems = JSON.parse(cachedData);
+            displayMenuItems(menuItems);
+        } catch (e) {
+            console.error("خطأ في قراءة الكاش", e);
+        }
+    } else if (container) {
+        // إذا أول مرة يفتح، بنعرض كروت تحميل وهمية سريعة بدال كلمة جاري التحميل
+        container.innerHTML = Array(4).fill(`
+            <div class="menu-card skeleton-card" style="opacity:0.5; animation: pulse 1s infinite alternate;">
+                <div style="height:120px; background:#e0e0e0; border-radius:8px;"></div>
+                <div style="height:20px; background:#e0e0e0; margin:10px 0; border-radius:4px;"></div>
+                <div style="height:15px; background:#e0e0e0; width:50%; border-radius:4px;"></div>
+            </div>
+        `).join('');
     }
 
+    // 2. جلب البيانات الحديثة من Google Sheet بالخلفية
     try {
-        const response = await fetch(GOOGLE_SHEET_URL);
+        const response = await fetch(GOOGLE_SHEET_URL, { redirect: "follow" });
         const data = await response.json();
 
-        // تحويل البيانات بقراءة ذكية تحمي من أي اختلاف بأسماء الأعمدة
-        menuItems = data.map((item, index) => {
-            // البحث عن المفتاح بالجدول بغض النظر عن الكابيتال والسمول
+        const newMenuItems = data.map((item, index) => {
             const findKey = (keyName) => {
                 const found = Object.keys(item).find(k => k.toLowerCase().trim() === keyName.toLowerCase().trim());
                 return found ? item[found] : null;
@@ -48,12 +64,13 @@ async function fetchMenuItems() {
             };
         });
 
+        // حفظ البيانات بـ localStorage وتحديث الشاشة فوراً
+        menuItems = newMenuItems;
+        localStorage.setItem("menuData", JSON.stringify(menuItems));
         displayMenuItems(menuItems);
+
     } catch (error) {
-        console.error("خطأ في تحميل المنيو من الشيت:", error);
-        if (container) {
-            container.innerHTML = "<p style='text-align:center; color:red; grid-column: 1/-1; padding: 20px;'>عذراً، تعذر تحميل المنيو حالياً. يرجى محاولة التحديث.</p>";
-        }
+        console.error("خطأ في تحميل المنيو:", error);
     }
 }
 
