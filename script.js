@@ -1,57 +1,61 @@
 // ==========================================
 // 1. الثوابت والإعدادات الرئيسية
 // ==========================================
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxEc2wWdbcjxos6bAy4O4wJWvVEpB3lkJEHnXhHBEjv7khY-hSW4elfL_0zP0PsMIcY/exec";
+
 const DEFAULT_PRICE = 2.50;
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80";
 
-// الرقم الحقيقي المستلم للطلبات وللنسخ
 const CLIQ_PHONE_NUMBER = "0785522491"; 
-const TARGET_PHONE_NUMBER = "962785522491"; // بصيغة الاتصال الدولي للواتس أب
-
-// الاسم المستعار الخاص بكليك (CliQ Alias)
+const TARGET_PHONE_NUMBER = "962785522491"; 
 const CLIQ_ALIAS = "MYCAFE"; 
 
-// ==========================================
-// 2. قائمة عناصر الكافيه (Cafe Menu Items)
-// ==========================================
-const menuItems = [
-    // مشروبات ساخنة
-    { id: 1, name: "إسبريسو دبل", category: "hot_drinks", price: 1.50, image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500&q=80" },
-    { id: 2, name: "كابتشينو", category: "hot_drinks", price: 2.50, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500&q=80" },
-    { id: 3, name: "لاتيه", category: "hot_drinks", price: 2.50, image: "https://images.unsplash.com/photo-1534778101976-62847782c213?w=500&q=80" },
-    { id: 5, name: "سبانيش لاتيه ساخن", category: "hot_drinks", price: 3.00, image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&q=80" },
-    { id: 6, name: "قهوة تركية", category: "hot_drinks", price: 1.25, image: "https://www.turkeyalaan.net/wp-content/uploads/2018/07/180302105914158Turkish-Coffee-Yawmiyati.jpg" },
-    { id: 7, name: "شاي أحمر / مع نعنع", category: "hot_drinks", price: 1.00, image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&q=80" },
-    { id: 8, name: "هوت شوكليت", category: "hot_drinks", price: 2.50, image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=500&q=80" },
-
-    // مشروبات باردة
-    { id: 9, name: "آيس سبانيش لاتيه", category: "cold_drinks", price: 3.25, image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500&q=80" },
-    { id: 10, name: "آيس أمريكانو", category: "cold_drinks", price: 2.25, image: "https://images.deliveryhero.io/image/hungerstation/product/image/1107301?width=1440&quality=75" },
-    { id: 11, name: "آيس موكا", category: "cold_drinks", price: 3.50, image: "https://tse3.mm.bing.net/th/id/OIP.JXrPjkODoMbTg2MTQlq36AHaLI?r=0&pid=Api&h=220&P=0" },
-    { id: 13, name: "موهيتو فراولة", category: "cold_drinks", price: 2.75, image: "https://tse4.mm.bing.net/th/id/OIP.bYCCmetMNjz6697iB4khzQHaE8?r=0&pid=Api&h=220&P=0" },
-    { id: 14, name: "عصير برتقال طبيعي", category: "cold_drinks", price: 2.00, image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&q=80" },
-    { id: 15, name: "سموذي مانجو", category: "cold_drinks", price: 3.00, image: "https://kitchen.sayidaty.net/uploads/small/b5/b59a52327ab3e01059014b367af932ea_w550_h550.jpg" },
-
-    // الحلويات
-    { id: 16, name: "تشيز كيك نيويورك", category: "desserts", price: 3.50, image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&q=80" },
-    { id: 17, name: "مولتن كيك مع آيس كريم", category: "desserts", price: 3.75, image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638295831754344626" },
-    { id: 18, name: "كيكة الشوكولاتة", category: "desserts", price: 3.00, image: "https://kitchen.sayidaty.net/uploads/small/1b/1bf0d766358e36b1cfa05dacc669c3d1_w750_h500.jpg" },
-    { id: 19, name: "تيراميسو إيطالي", category: "desserts", price: 3.50, image: "https://tse2.mm.bing.net/th/id/OIP.baysV-HBi4VH5xZSuGsZYQHaE7?r=0&pid=Api&h=220&P=0" },
-    { id: 20, name: "براونيز شوكولاتة", category: "desserts", price: 2.50, image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&q=80" },
-
-    // المخبوزات والوافل
-    { id: 21, name: "وافل نوتيلا مع فواكه", category: "bakery", price: 3.50, image: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=500&q=80" },
-    { id: 22, name: "كريب لوتس", category: "bakery", price: 3.50, image: "https://images.unsplash.com/photo-1519676867240-f03562e64548?w=500&q=80" },
-    { id: 23, name: "بان كيك مع عسل وزبدة", category: "bakery", price: 3.00, image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&q=80" },
-    { id: 24, name: "كرواسون زبدة / جبنة", category: "bakery", price: 1.50, image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80" },
-
-    // وجبات خفيفة
-    { id: 26, name: "ساندويش كلوب دجاج", category: "snack", price: 3.50, image: "https://www.atyabtabkha.com/tachyon/sites/2/2025/09/%D9%83%D9%84%D9%88%D8%A8-%D8%B3%D8%A7%D9%86%D8%AF%D9%88%D9%8A%D8%B4-%D8%A8%D8%A7%D9%84%D8%AF%D8%AC%D8%A7%D8%AC-1024x496.jpg" },
-    { id: 27, name: "ساندويش حلوم مشوي", category: "snack", price: 3.00, image: "https://kitchen.sayidaty.net/uploads/small/54/5464f725b25ee16f71dd2c8b9b98b693_w750_h500.jpg" },
-    { id: 28, name: "بطاطا مع صوص", category: "snack", price: 2.00, image: "https://www.atyabtabkha.com/tachyon/sites/2/2022/09/potato-with-sauce.jpg" }
-];
-
+let menuItems = [];
 let cart = [];
+
+// ==========================================
+// 2. جلب البيانات من Google Sheets
+// ==========================================
+async function fetchMenuItems() {
+    const container = document.getElementById("menuContainer");
+    if (container) {
+        container.innerHTML = "<p style='text-align:center; grid-column: 1/-1; padding: 20px; font-weight: bold;'>جاري تحميل المنيو...</p>";
+    }
+
+    try {
+        const response = await fetch(GOOGLE_SHEET_URL);
+        const data = await response.json();
+
+        // تحويل البيانات بقراءة ذكية تحمي من أي اختلاف بأسماء الأعمدة
+        menuItems = data.map((item, index) => {
+            // البحث عن المفتاح بالجدول بغض النظر عن الكابيتال والسمول
+            const findKey = (keyName) => {
+                const found = Object.keys(item).find(k => k.toLowerCase().trim() === keyName.toLowerCase().trim());
+                return found ? item[found] : null;
+            };
+
+            const name = findKey("ItemName") || findKey("Name") || "صنف بدون اسم";
+            const category = findKey("Category") || "all";
+            const price = findKey("Price") || DEFAULT_PRICE;
+            const image = findKey("ImageUrl") || findKey("Image") || DEFAULT_IMAGE;
+
+            return {
+                id: index + 1,
+                name: String(name),
+                category: String(category).trim().toLowerCase(),
+                price: parseFloat(price) || DEFAULT_PRICE,
+                image: (image && String(image).trim() !== "") ? String(image).trim() : DEFAULT_IMAGE
+            };
+        });
+
+        displayMenuItems(menuItems);
+    } catch (error) {
+        console.error("خطأ في تحميل المنيو من الشيت:", error);
+        if (container) {
+            container.innerHTML = "<p style='text-align:center; color:red; grid-column: 1/-1; padding: 20px;'>عذراً، تعذر تحميل المنيو حالياً. يرجى محاولة التحديث.</p>";
+        }
+    }
+}
 
 // ==========================================
 // 3. عرض المنيو والفلترة
@@ -62,14 +66,17 @@ function displayMenuItems(items) {
     
     container.innerHTML = "";
 
-    items.forEach(item => {
-        const imgSrc = (item.image && item.image.trim() !== "") ? item.image : DEFAULT_IMAGE;
+    if (items.length === 0) {
+        container.innerHTML = "<p style='text-align:center; grid-column: 1/-1; padding: 20px;'>لا توجد عناصر في هذا القسم حالياً.</p>";
+        return;
+    }
 
+    items.forEach(item => {
         const card = document.createElement("div");
         card.className = "menu-card";
         card.innerHTML = `
             <div class="card-image-container">
-                <img src="${imgSrc}" alt="${item.name}" class="item-img" loading="lazy" onerror="this.onerror=null;this.src='${DEFAULT_IMAGE}';">
+                <img src="${item.image}" alt="${item.name}" class="item-img" loading="lazy" onerror="this.onerror=null;this.src='${DEFAULT_IMAGE}';">
             </div>
             <div class="card-body">
                 <h3>${item.name}</h3>
@@ -89,10 +96,12 @@ function filterCategory(category, event) {
         event.target.classList.add('active');
     }
 
-    if (category === 'all') {
+    const selectedCategory = String(category).toLowerCase().trim();
+
+    if (selectedCategory === 'all') {
         displayMenuItems(menuItems);
     } else {
-        const filtered = menuItems.filter(item => item.category === category);
+        const filtered = menuItems.filter(item => item.category === selectedCategory);
         displayMenuItems(filtered);
     }
 }
@@ -102,6 +111,8 @@ function filterCategory(category, event) {
 // ==========================================
 function addToCart(id) {
     const item = menuItems.find(prod => prod.id === id);
+    if (!item) return;
+
     const cartItem = cart.find(prod => prod.id === id);
 
     if (cartItem) {
@@ -189,7 +200,6 @@ function handlePaymentChange() {
     }
 }
 
-// دالة نسخ الرقم للحافظة (Clipboard)
 function copyCliqNumber() {
     if (navigator.clipboard) {
         navigator.clipboard.writeText(CLIQ_PHONE_NUMBER).then(() => {
@@ -232,7 +242,6 @@ function sendToWhatsApp() {
         }
     }
 
-    // تصحيح الخطأ: تعريف المتغير بشكل صحيح أولاً
     let message = "☕ *طلب جديد من المنيو الإلكتروني*\n\n";
     message += "*تفاصيل الطلب:*\n";
 
@@ -274,5 +283,5 @@ document.addEventListener("DOMContentLoaded", () => {
         cliqAliasText.textContent = CLIQ_ALIAS;
     }
 
-    displayMenuItems(menuItems);
+    fetchMenuItems();
 });
